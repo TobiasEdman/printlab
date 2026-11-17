@@ -1,0 +1,9 @@
+# Downloaded models cannot be regenerated, so their meshes go through Git LFS.
+# Generated meshes never reach git (see .gitignore). tests/test_library.py
+# fails if a library mesh was committed as a plain blob.
+library/**/*.[sS][tT][lL] filter=lfs diff=lfs merge=lfs -text
+library/**/*.3[mM][fF] filter=lfs diff=lfs merge=lfs -text
+library/**/*.[sS][tT][eE][pP] filter=lfs diff=lfs merge=lfs -text
+library/**/*.[sS][tT][pP] filter=lfs diff=lfs merge=lfs -text
+library/**/*.[oO][bB][jJ] filter=lfs diff=lfs merge=lfs -text
+library/**/*.[zZ][iI][pP] filter=lfs diff=lfs merge=lfs -text

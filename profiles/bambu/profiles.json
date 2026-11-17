@@ -1,0 +1,29 @@
+{
+  "bambu_studio": "02.08.02.61",
+  "profiles": {
+    "h2d-0.4": {
+      "kind": "machine",
+      "vendor": "Bambu Lab H2D 0.4 nozzle"
+    },
+    "0.20-standard": {
+      "kind": "process",
+      "vendor": "0.20mm Standard @BBL H2D"
+    },
+    "pla-basic": {
+      "kind": "filament",
+      "vendor": "Bambu PLA Basic @BBL H2D"
+    },
+    "petg-basic": {
+      "kind": "filament",
+      "vendor": "Bambu PETG Basic @BBL H2D 0.4 nozzle"
+    },
+    "asa": {
+      "kind": "filament",
+      "vendor": "Bambu ASA @BBL H2D 0.4 nozzle"
+    },
+    "abs": {
+      "kind": "filament",
+      "vendor": "Bambu ABS @BBL H2D"
+    }
+  }
+}

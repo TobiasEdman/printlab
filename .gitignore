@@ -1,0 +1,33 @@
+# Generated: STLs, sliced 3MFs and slicer logs. Rebuild with build.py + printlab slice.
+build/
+
+# Generated meshes must not land next to the source either.
+designs/**/*.stl
+designs/**/*.3mf
+designs/**/*.step
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# macOS
+.DS_Store
+
+# Credentials & secrets
+*credentials*
+*secret*
+*.env
+.env
+
+# IDE
+.vscode/
+.idea/
+.claude/settings.local.json
+
+# Bambu Studio CLI status file, written to its working directory
+result.json

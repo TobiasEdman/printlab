@@ -1,0 +1,19 @@
+name: Calibration cube
+description: >-
+  20 mm cube with a Ø6 mm vertical through-hole. Measure the outside for XY
+  accuracy and the hole for hole shrinkage.
+build: build.py
+outputs: [calibration_cube.stl]
+
+slice:
+  machine: h2d-0.4
+  process: 0.20-standard
+  filaments: [pla-basic]            # filament slots 1..n, keys in profiles/bambu/profiles.json
+  parts:
+    calibration_cube.stl: 1         # part -> filament slot
+  extruders: [2]                    # slot -> extruder: 1 left, 2 right
+  settings:                         # project overrides on top of the vendor profiles
+    curr_bed_type: Textured PEI Plate
+
+# Physical prints, newest last. Record only prints that actually happened.
+prints: []

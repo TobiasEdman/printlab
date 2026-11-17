@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # LFS objects are fetched: designs derived from library models build from
+      # those meshes. The LFS test reads the git index, not the checkout.
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # Third-party action pinned to a commit (v10.3.2), as in cr-lab.
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e
+        with:
+          version: "0.13.5"
+          python-version: "3.11"
+          enable-cache: true
+
+      - name: Install from uv.lock
+        run: uv sync --locked --extra dev
+
+      # The Bambu Studio end-to-end slice skips here: no app on the runner.
+      - name: Test mesh checks, profiles, pipeline logic and every model.yaml
+        run: uv run --no-sync pytest -q -rs
+
+      - name: Lint
+        run: uv run --no-sync ruff check src tests designs
