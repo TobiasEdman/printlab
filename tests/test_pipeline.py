@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import pytest
 import trimesh
+from scipy.spatial import cKDTree
 
 from printlab.bambu import pipeline, threemf
 
@@ -70,6 +71,19 @@ def test_check_mesh_accepts_translated_and_renumbered_copy():
     order = np.random.default_rng(0).permutation(len(v))
     inverse = np.argsort(order)
     assert threemf.check_mesh(v[order] + [100, 50, 5], inverse[f], v, f) < 1e-9
+
+
+def test_check_mesh_accepts_vertices_closer_than_the_3mf_rounding():
+    """Two STL vertices 1 µm apart; the 3MF's rounding moves each nearer the other."""
+    v, f = cube()
+    twin = len(v)
+    v = np.vstack([v, v[0] + [1e-6, 0, 0]])
+    f = np.vstack([f, [[twin, f[0][1], f[0][2]]]])
+    rounded = v.copy()
+    rounded[0] += [0.9e-6, 0, 0]
+    rounded[twin] -= [0.9e-6, 0, 0]
+    assert cKDTree(v).query(rounded[[0, twin]])[1].tolist() == [twin, 0]
+    assert threemf.check_mesh(rounded, f, v, f) < 1e-5
 
 
 def test_check_mesh_rejects_flipped_winding():

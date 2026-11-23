@@ -122,17 +122,28 @@ def check_mesh(vertices: np.ndarray, triangles: np.ndarray, stl_vertices: np.nda
     """A project mesh equals its STL up to a translation: same vertices, same triangles
     with the same winding. Returns the largest vertex deviation in mm.
 
+    Bambu Studio keeps the STL's vertex order, so that pairing is tried first: the
+    nearest STL vertex is ambiguous where two lie closer than the 3MF's coordinates
+    are rounded (about 1 µm). A renumbered copy is paired by nearest vertex.
+
     From cr-lab experiments/007 checks.py.
     """
     vertices = np.asarray(vertices) - np.min(vertices, axis=0)
     stl_vertices = np.asarray(stl_vertices) - np.min(stl_vertices, axis=0)
-    d, idx = cKDTree(stl_vertices).query(vertices)
+    d, nearest = cKDTree(stl_vertices).query(vertices)
     worst = float(d.max())
     assert worst < tol_mm, ("vertices without a match in the STL (mm)", worst)
     assert len(triangles) == len(stl_faces), ("triangle count", len(triangles), len(stl_faces))
-    assert np.array_equal(_canonical(idx[np.asarray(triangles)]), _canonical(stl_faces)), \
-        "triangles differ from the STL"
-    return worst
+    pairings = [(nearest, worst)]
+    if len(vertices) == len(stl_vertices):
+        in_order = float(np.linalg.norm(vertices - stl_vertices, axis=1).max())
+        if in_order < tol_mm:
+            pairings.insert(0, (np.arange(len(vertices)), in_order))
+    expected = _canonical(stl_faces)
+    for idx, deviation in pairings:
+        if np.array_equal(_canonical(idx[np.asarray(triangles)]), expected):
+            return deviation
+    raise AssertionError("triangles differ from the STL")
 
 
 def project_settings(members: dict[str, bytes]) -> dict:
